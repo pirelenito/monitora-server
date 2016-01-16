@@ -26,11 +26,16 @@ function setupPooling (callback) {
 }
 
 function queryStorage () {
+  const timestamp = Date.now()
   const output = execSync('df')
-  return parse(output)
+  const devices = parse(output)
     .filter(onlyDevices)
     .sort(storage => storage.device)
     .reduce(unique, [])
+
+  return {
+    timestamp, devices
+  }
 }
 
 /**
@@ -61,13 +66,10 @@ function parse (output) {
 }
 
 function parseLine (line) {
-  const timestamp = Date.now()
-
   const columns = line.match(/\S+/g)
   if (!columns) { return }
 
   return {
-    timestamp,
     device: columns[0],
     size: columns[1],
     used: columns[2],
