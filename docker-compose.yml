@@ -1,0 +1,13 @@
+dev:
+  build: .
+  command: 'bash -c "npm install && npm run dev"'
+  volumes:
+    - .:/usr/src/app
+  ports:
+    - 3000:3000
+
+test:
+  build: .
+  command: 'bash -c "npm install && npm test"'
+  volumes:
+    - .:/usr/src/app
