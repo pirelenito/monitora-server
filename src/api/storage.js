@@ -28,6 +28,27 @@ function setupPooling (callback) {
 function queryStorage () {
   const output = execSync('df')
   return parse(output)
+    .filter(onlyDevices)
+    .sort(storage => storage.device)
+    .reduce(unique, [])
+}
+
+/**
+  Remove duplicates of an ordered list of storages
+ */
+function unique (uniques, storage) {
+  const length = uniques.length
+
+  if (length === 0 ||
+      uniques[length - 1].device !== storage.device) {
+    return [...uniques, storage]
+  }
+
+  return uniques
+}
+
+function onlyDevices (storage) {
+  return storage.device.match(/^\/dev\/.+/)
 }
 
 function parse (output) {
@@ -50,7 +71,6 @@ function parseLine (line) {
     device: columns[0],
     size: columns[1],
     used: columns[2],
-    available: columns[3],
-    mount: columns[5]
+    available: columns[3]
   }
 }
